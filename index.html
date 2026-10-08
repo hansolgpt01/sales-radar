@@ -159,6 +159,17 @@
   .chk-btn.on:hover{color:#BE123C;border-color:#FECDD3;background:#FFF1F2;}
   .chk-btn:disabled,.big-btn:disabled,.ghost-btn:disabled{opacity:.55;cursor:default;transform:none;}
   .empty{padding:36px 20px;text-align:center;color:var(--faint);font-size:13.5px;}
+  /* 산업군 칩 (기업명 앞) */
+  .c-name .nm-line{display:flex;align-items:center;gap:6px;min-width:0;}
+  .ind-pill{flex:0 0 auto;max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800;color:#6D28D9;background:#F3EEFF;border:1px solid #E4D9FF;border-radius:6px;padding:0 7px;line-height:19px;display:inline-block;}
+  .c-name .nm{min-width:0;}
+  /* 페이지 번호 */
+  .pager{display:flex;align-items:center;justify-content:center;gap:6px;margin:16px 0 0;flex-wrap:wrap;}
+  .pager button{min-width:36px;height:36px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:13.5px;font-weight:800;color:var(--body);cursor:pointer;transition:background .12s,border-color .12s,color .12s;}
+  .pager button:hover:not(:disabled){border-color:var(--blue);color:var(--blue);}
+  .pager button[aria-current="page"]{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .pager button:disabled{opacity:.4;cursor:default;}
+  .pager .pinfo{font-size:12px;color:var(--faint);margin-left:6px;}
 
   /* ── 히스토리 ── */
   .h-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-2px 0 12px;font-size:12.5px;color:var(--muted);}
@@ -175,14 +186,13 @@
   .ht .t-date{white-space:nowrap;color:var(--ink);font-weight:700;}
   .ht .t-date small{display:block;font-size:11.5px;color:var(--faint);font-weight:600;}
   .ht .t-co{font-weight:800;color:var(--ink);white-space:nowrap;}
+  .ht .t-co .ind-pill{margin-right:6px;vertical-align:1px;}
   .ht .t-co .div-pill{margin-left:0;}
   .ht .t-sig{color:var(--body);word-break:keep-all;}
   .ht .t-sig a{display:block;margin-top:3px;font-size:12.5px;font-weight:700;}
   .ht .t-by{white-space:nowrap;font-weight:800;color:var(--ink);}
   .ht .t-memo{white-space:pre-line;word-break:break-word;color:var(--amber-ink);}
   .ht .t-memo:empty::before{content:"—";color:var(--faint);}
-  .more{display:block;margin:14px auto 0;height:40px;padding:0 22px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:800;color:var(--body);cursor:pointer;}
-  .more:hover{border-color:var(--blue);color:var(--blue);}
   .foot{margin:26px 4px 0;font-size:12px;color:var(--faint);text-align:center;word-break:keep-all;}
 
   /* ── 불러오는 중 · 오류 ── */
@@ -307,27 +317,30 @@
       <div class="seg" id="fSt" role="group" aria-label="상태">
         <button type="button" data-v="" aria-pressed="true">전체</button><button type="button" data-v="todo" aria-pressed="false">미컨택</button><button type="button" data-v="done" aria-pressed="false">컨택 완료</button>
       </div>
-      <label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="기업 · 담당자 · 메모 검색" aria-label="이번 주 검색" autocomplete="off"></label>
+      <select class="sel" id="fInd" aria-label="산업군"><option value="">산업군 전체</option></select>
+      <label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="기업명 검색" aria-label="기업명 검색" autocomplete="off"></label>
     </div>
     <div class="list" id="list">
       <div class="lh"><span>기업</span><span>영업기회</span><span>컨택 현황 · 메모</span><span></span></div>
       <div id="rows"><div style="padding:18px 20px"><div class="sk" style="height:18px;width:40%"></div><div class="sk" style="height:14px;width:75%;margin-top:12px"></div><div class="sk" style="height:18px;width:35%;margin-top:26px"></div><div class="sk" style="height:14px;width:70%;margin-top:12px"></div></div></div>
     </div>
+    <nav class="pager" id="wPager" aria-label="이번 주 목록 페이지"></nav>
   </section>
 
   <!-- 영업현황 히스토리 -->
   <section id="pHist" role="tabpanel" aria-labelledby="tabHist" hidden>
     <div class="toolbar">
+      <select class="sel" id="hInd" aria-label="산업군"><option value="">산업군 전체</option></select>
       <select class="sel" id="hWho" aria-label="담당자"><option value="">담당자 전체</option></select>
       <select class="sel" id="hPeriod" aria-label="기간">
         <option value="0">전체 기간</option><option value="28">최근 4주</option><option value="84">최근 12주</option><option value="182">최근 6개월</option>
       </select>
       <button type="button" class="dl-btn" id="hCsv"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>엑셀(CSV) 받기</button>
-      <label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="hq" type="search" placeholder="기업 · 담당자 · 메모 · 기사 검색" aria-label="히스토리 검색" autocomplete="off"></label>
+      <label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="hq" type="search" placeholder="기업명 검색" aria-label="기업명 검색" autocomplete="off"></label>
     </div>
     <div class="h-sum" id="hSum"></div>
     <div id="hBody"></div>
-    <button type="button" class="more" id="hMore" hidden>더 보기</button>
+    <nav class="pager" id="hPager" aria-label="히스토리 페이지"></nav>
   </section>
 
   <p class="foot">체크 기록은 팀 공유 시트(컨택체크)에 계속 누적돼요. 이 페이지는 링크를 아는 사람 누구나 볼 수 있으니 메모에 개인 연락처 등 민감한 정보는 적지 말아 주세요.</p>
@@ -363,7 +376,7 @@
 "use strict";
 /* ★ 웹앱 주소(…/exec) — Apps Script [배포 관리]의 웹 앱 URL. 배포는 '나로 실행 · 모든 사용자'여야 합니다. */
 var API_URL = "https://script.google.com/macros/s/AKfycby_TYx31IA1IJrn9kx55KB8QbPlaMsLR-eev3ZQlqKvCFq8eCkzTmLMPW8zAHkAMmAUXA/exec";
-var MEMO_MAX = 200, HIST_PAGE = 50;
+var MEMO_MAX = 200, PAGE_SIZE = 15, PAGE_BLOCK = 5;   /* 한 페이지 15개, 페이지 번호는 5개씩 */
 
 var ICON = {   /* 고정 SVG(사용자 입력 아님) */
   check:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.3 4.3L19 7.2"/></svg>',
@@ -371,7 +384,7 @@ var ICON = {   /* 고정 SVG(사용자 입력 아님) */
   info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg>'
 };
 /* 상태 — 이름은 이 화면을 연 동안만 기억(브라우저에 저장하지 않음) */
-var S = { items:[], names:[], hist:[], histTotal:0, histLoaded:false, target:"", myName:"", busy:{}, fDiv:"", fSt:"", histShown:HIST_PAGE };
+var S = { items:[], names:[], hist:[], histTotal:0, histLoaded:false, target:"", myName:"", busy:{}, fDiv:"", fSt:"", wPage:1, hPage:1 };
 var $ = function(id){ return document.getElementById(id); };
 
 /* ── 공용 헬퍼: 모든 데이터는 textContent로만 넣는다(HTML 주입 방지) ── */
@@ -381,12 +394,40 @@ function cleanName(v){ return String(v||"").replace(/[<>"'`]/g,"").replace(/^[\s
 function cleanMemo(v){ return String(v||"").replace(/\r\n?/g,"\n").replace(/\n{3,}/g,"\n\n").replace(/^[\s=+\-@]+/,"").trim().substring(0,MEMO_MAX); }
 function md(at){ var m=String(at||"").match(/^\d{4}-(\d{2})-(\d{2})/); return m ? (Number(m[1])+"월 "+Number(m[2])+"일") : ""; }
 function mdShort(at){ var m=String(at||"").match(/^\d{4}-(\d{2})-(\d{2})/); return m ? (m[1]+"."+m[2]) : ""; }
+/* "2026-10-08 14:30" → "26.10.08" */
+function ymd(at){ var m=String(at||"").match(/^\d{2}(\d{2})-(\d{2})-(\d{2})/); return m ? (m[1]+"."+m[2]+"."+m[3]) : ""; }
 function hm(at){ var m=String(at||"").match(/(\d{2}):(\d{2})/); return m ? (m[1]+":"+m[2]) : ""; }
 function hostOf(u){ var m=String(u||"").match(/^https?:\/\/([^\/?#:]+)/i); return m ? m[1].replace(/^www\./i,"") : "바로가기"; }
 function findItem(name){ for(var i=0;i<S.items.length;i++){ if(S.items[i].company===name) return S.items[i]; } return null; }
 var AVA=["#FDE68A","#BFDBFE","#C7D2FE","#FBCFE8","#A7F3D0","#FED7AA","#DDD6FE","#BAE6FD"];
 function avaColor(s){ var h=0; s=String(s||""); for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return AVA[h%AVA.length]; }
 function ava(name, cls){ var a=el("span",cls||"ava",String(name||"?").charAt(0)); a.style.background=avaColor(name); return a; }
+function indPill(t){ var p=el("span","ind-pill",t); p.title="산업군: "+t; return p; }
+function industryOf(name){ var it=findItem(name); return it&&it.industry?it.industry:""; }
+/* 기업명만 검색(공백·대소문자 무시) */
+function nameMatch(company,q){ if(!q) return true; return String(company||"").toLowerCase().replace(/\s+/g,"").indexOf(q)>-1; }
+function qOf(id){ return String($(id).value||"").trim().toLowerCase().replace(/\s+/g,""); }
+/* 페이지 번호: ‹ 1 2 3 4 5 › (5개씩 묶음). 반환값 = 실제 표시 페이지 */
+function renderPager(box,total,page,go){
+  box.textContent="";
+  var pages=Math.ceil(total/PAGE_SIZE); if(pages<=1) return 1;
+  page=Math.min(Math.max(1,page),pages);
+  var start=Math.floor((page-1)/PAGE_BLOCK)*PAGE_BLOCK+1, end=Math.min(start+PAGE_BLOCK-1,pages);
+  function btn(label,p,opt){ var b=el("button",null,label); b.type="button"; if(opt&&opt.aria) b.setAttribute("aria-label",opt.aria);
+    if(p===page&&!(opt&&opt.nav)) b.setAttribute("aria-current","page"); if(opt&&opt.disabled) b.disabled=true;
+    b.addEventListener("click",function(){ go(p); }); box.appendChild(b); }
+  btn("‹",Math.max(1,start-1),{nav:true,disabled:start===1,aria:"이전 페이지 묶음"});
+  for(var i=start;i<=end;i++) btn(String(i),i);
+  btn("›",Math.min(pages,end+1),{nav:true,disabled:end===pages,aria:"다음 페이지 묶음"});
+  box.appendChild(el("span","pinfo",page+" / "+pages+" 페이지 · 총 "+total+"건"));
+  return page;
+}
+function fillSelect(sel,values){
+  var cur=sel.value; while(sel.options.length>1) sel.remove(1);
+  values.forEach(function(v){ var o=el("option",null,v); o.value=v; sel.appendChild(o); });
+  sel.value=values.indexOf(cur)>-1?cur:"";
+}
+function uniqSorted(arr){ var seen={},out=[]; arr.forEach(function(v){ if(v&&!seen[v]){ seen[v]=1; out.push(v); } }); return out.sort(function(a,b){ return a.localeCompare(b,"ko"); }); }
 function divPill(d){ return el("span","div-pill"+(d==="글로벌"?" g":""),d||"국내"); }
 function extLink(text,u){ var a=el("a",null,text); a.href=u; a.target="_blank"; a.rel="noopener noreferrer"; return a; }
 
@@ -439,7 +480,7 @@ function companyTimeline(name){
   if(!rows.length){ wrap.appendChild(el("div","tl-empty","아직 기록이 없어요. 첫 컨택을 남겨 주세요!")); return wrap; }
   var ul=el("ul","tl");
   rows.forEach(function(h){
-    var li=el("li"); li.appendChild(el("div","w",(h.weekLabel||"")+" · "+mdShort(h.at)+" "+hm(h.at)));
+    var li=el("li"); li.appendChild(el("div","w",(h.weekLabel||"")+" · "+ymd(h.at)+" "+hm(h.at)));
     var b=el("div"); b.appendChild(el("span","b",h.by||"—")); b.appendChild(document.createTextNode(" 컨택")); li.appendChild(b);
     if(h.memo) li.appendChild(el("div","m",h.memo));
     ul.appendChild(li);
@@ -456,7 +497,7 @@ function renderFocus(){
     n.appendChild(tx); box.appendChild(n); return;
   }
   var ct=it.contacted, card=el("article","focus"+(ct?" done":""));
-  var L=el("div","f-left"), ey=el("span","eyebrow"); ey.appendChild(el("i")); ey.appendChild(document.createTextNode((it.division||"국내")+" 물류 · 이번 주 영업기회"));
+  var L=el("div","f-left"), ey=el("span","eyebrow"); ey.appendChild(el("i")); ey.appendChild(document.createTextNode((it.industry?it.industry+" · ":"")+(it.division||"국내")+" 물류 · 이번 주 영업기회"));
   L.appendChild(ey); L.appendChild(el("h2","f-name",it.company));
   if(it.signal) L.appendChild(el("div","f-signal",it.signal));
   if(it.article&&safeUrl(it.article.link)){ var fa=el("div","f-article"); fa.appendChild(el("span","tg","관련기사")); fa.appendChild(extLink(it.article.title+" ↗",safeUrl(it.article.link))); L.appendChild(fa); }
@@ -464,7 +505,7 @@ function renderFocus(){
   var R=el("div","f-right");
   if(ct){
     var d=el("div","done-box"), top=el("div","done-top"), ic=el("span","done-ico"); ic.innerHTML=ICON.check; top.appendChild(ic);
-    var t=el("div","done-txt",(ct.by||"누군가")+"님이 컨택했어요"); t.appendChild(el("small",null,(md(ct.at)?md(ct.at)+" ":"")+hm(ct.at)+" 기록")); top.appendChild(t);
+    var t=el("div","done-txt",(ct.by||"누군가")+"님이 컨택했어요"); t.appendChild(el("small",null,ymd(ct.at)+" "+hm(ct.at)+" 기록")); top.appendChild(t);
     var un=el("button","ghost-btn","해제"); un.type="button"; un.disabled=!!S.busy[it.company]; un.addEventListener("click",function(){ askUncheck(it); }); top.appendChild(un);
     d.appendChild(top);
     if(ct.memo){ var mb=el("div","memo-box"); mb.appendChild(el("b",null,"메모")); mb.appendChild(document.createTextNode(ct.memo)); d.appendChild(mb); }
@@ -480,24 +521,26 @@ function renderFocus(){
 
 /* ── 이번 주 목록 ── */
 function renderRows(){
-  var q=String($("q").value||"").trim().toLowerCase(), box=$("rows"); box.textContent="";
+  var q=qOf("q"), ind=$("fInd").value, box=$("rows"); box.textContent="";
   var rows=S.items.filter(function(it){
     if(it.company===S.target) return false;
     if(S.fDiv && (it.division||"국내")!==S.fDiv) return false;
+    if(ind && it.industry!==ind) return false;
     if(S.fSt==="done" && !it.contacted) return false;
     if(S.fSt==="todo" && it.contacted) return false;
-    if(!q) return true;
-    var c=it.contacted||{};
-    return (it.company+" "+(it.signal||"")+" "+(c.by||"")+" "+(c.memo||"")).toLowerCase().indexOf(q)>-1;
+    return nameMatch(it.company,q);
   });
-  if(!rows.length){ box.appendChild(el("div","empty",(q||S.fDiv||S.fSt)?"조건에 맞는 기업이 없어요.":"이번 주 영업기회가 아직 없어요.")); return; }
-  rows.forEach(function(it){
+  if(!rows.length){ box.appendChild(el("div","empty",(q||ind||S.fDiv||S.fSt)?"조건에 맞는 기업이 없어요.":"이번 주 영업기회가 아직 없어요.")); $("wPager").textContent=""; return; }
+  S.wPage=renderPager($("wPager"),rows.length,S.wPage,function(p){ S.wPage=p; renderRows(); $("list").scrollIntoView({behavior:"smooth",block:"start"}); });
+  rows.slice((S.wPage-1)*PAGE_SIZE,S.wPage*PAGE_SIZE).forEach(function(it){
     var ct=it.contacted, row=el("div","row"+(ct?" done":""));
-    var n=el("div","c-name"); n.appendChild(el("span","nm",it.company)); n.appendChild(divPill(it.division)); row.appendChild(n);
+    var n=el("div","c-name"), nl=el("div","nm-line");
+    if(it.industry) nl.appendChild(indPill(it.industry));
+    nl.appendChild(el("span","nm",it.company)); n.appendChild(nl); n.appendChild(divPill(it.division)); row.appendChild(n);
     var sg=el("div","c-sig",it.signal||""); sg.title=it.signal||""; row.appendChild(sg);
     var st=el("div","c-st");
     if(ct){
-      var p=el("span","st-pill"); p.appendChild(ava(ct.by)); p.appendChild(document.createTextNode(ct.by||"—")); p.appendChild(el("span","d",mdShort(ct.at)+" 컨택")); st.appendChild(p);
+      var p=el("span","st-pill"); p.appendChild(ava(ct.by)); p.appendChild(document.createTextNode(ct.by||"—")); p.appendChild(el("span","d",ymd(ct.at)+" 컨택")); st.appendChild(p);
       if(ct.memo){ var mc=el("span","memo-chip",ct.memo); mc.title=ct.memo; st.appendChild(mc); }
     }else st.appendChild(el("span","st-none","아직 컨택 전"));
     row.appendChild(st);
@@ -511,59 +554,55 @@ function renderRows(){
 }
 
 /* ── 히스토리 ── */
+function histIndustry(h){ return h.industry||industryOf(h.company); }
 function histFiltered(){
-  var q=String($("hq").value||"").trim().toLowerCase(), who=$("hWho").value, days=Number($("hPeriod").value)||0, cut="";
+  var q=qOf("hq"), who=$("hWho").value, ind=$("hInd").value, days=Number($("hPeriod").value)||0, cut="";
   if(days){ var d=new Date(Date.now()-days*86400000); cut=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2); }
   return S.hist.filter(function(h){
     if(who && h.by!==who) return false;
+    if(ind && histIndustry(h)!==ind) return false;
     if(cut && String(h.at||h.week).substring(0,10)<cut) return false;
-    if(!q) return true;
-    return (h.company+" "+h.by+" "+(h.memo||"")+" "+(h.signal||"")+" "+(h.title||"")).toLowerCase().indexOf(q)>-1;
+    return nameMatch(h.company,q);
   });
 }
-function fillWhoSelect(){
-  var sel=$("hWho"), cur=sel.value, seen={}, names=[];
-  S.hist.forEach(function(h){ if(h.by && !seen[h.by]){ seen[h.by]=1; names.push(h.by); } });
-  names.sort(function(a,b){ return a.localeCompare(b,"ko"); });
-  while(sel.options.length>1) sel.remove(1);
-  names.forEach(function(n){ var o=el("option",null,n); o.value=n; sel.appendChild(o); });
-  sel.value=names.indexOf(cur)>-1?cur:"";
+function fillFilters(){
+  fillSelect($("hWho"),uniqSorted(S.hist.map(function(h){ return h.by; })));
+  fillSelect($("fInd"),uniqSorted(S.items.map(function(x){ return x.industry; })));
+  fillSelect($("hInd"),uniqSorted(S.hist.map(histIndustry).concat(S.items.map(function(x){ return x.industry; }))));
 }
 function renderHist(){
-  var body=$("hBody"), sum=$("hSum"); body.textContent=""; sum.textContent="";
-  if(!S.histLoaded){ body.appendChild(el("div","list")).appendChild(el("div","empty","불러오는 중…")); $("hMore").hidden=true; return; }
+  var body=$("hBody"), sum=$("hSum"); body.textContent=""; sum.textContent=""; $("hPager").textContent="";
+  if(!S.histLoaded){ body.appendChild(el("div","list")).appendChild(el("div","empty","불러오는 중…")); return; }
   var rows=histFiltered();
-  /* 요약: 건수 + 담당자별 상위 5명(누르면 필터) */
   sum.appendChild(el("span",null,"")).appendChild(el("b",null,rows.length+"건"));
   var cnt={}; rows.forEach(function(h){ if(h.by) cnt[h.by]=(cnt[h.by]||0)+1; });
   Object.keys(cnt).sort(function(a,b){ return cnt[b]-cnt[a]; }).slice(0,5).forEach(function(n){
     var c=el("button","who-chip"); c.type="button"; c.appendChild(ava(n)); c.appendChild(document.createTextNode(n+" ")); c.appendChild(el("span","c",cnt[n]));
-    c.addEventListener("click",function(){ $("hWho").value=$("hWho").value===n?"":n; S.histShown=HIST_PAGE; renderHist(); });
+    c.addEventListener("click",function(){ $("hWho").value=$("hWho").value===n?"":n; S.hPage=1; renderHist(); });
     sum.appendChild(c);
   });
-  if(!rows.length){ var e=el("div","list"); e.appendChild(el("div","empty",S.hist.length?"조건에 맞는 기록이 없어요.":"아직 누적된 컨택 기록이 없어요.")); body.appendChild(e); $("hMore").hidden=true; return; }
+  if(!rows.length){ var e=el("div","list"); e.appendChild(el("div","empty",S.hist.length?"조건에 맞는 기록이 없어요.":"아직 누적된 컨택 기록이 없어요.")); body.appendChild(e); return; }
+  S.hPage=renderPager($("hPager"),rows.length,S.hPage,function(p){ S.hPage=p; renderHist(); $("hBody").scrollIntoView({behavior:"smooth",block:"start"}); });
   var t=el("table","ht"), th=el("thead"), hr=el("tr");
   ["일시","기업","영업기회 · 관련기사","컨택자","메모"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
   th.appendChild(hr); t.appendChild(th);
   var tb=el("tbody");
-  rows.slice(0,S.histShown).forEach(function(h){
+  rows.slice((S.hPage-1)*PAGE_SIZE,S.hPage*PAGE_SIZE).forEach(function(h){
     var tr=el("tr");
-    var d=el("td","t-date",mdShort(h.at)+" "+hm(h.at)); d.appendChild(el("small",null,h.weekLabel||"")); tr.appendChild(d);
-    var co=el("td","t-co"); co.appendChild(document.createTextNode(h.company+" ")); if(h.division) co.appendChild(divPill(h.division)); tr.appendChild(co);
+    var d=el("td","t-date",ymd(h.at)+" "+hm(h.at)); d.appendChild(el("small",null,h.weekLabel||"")); tr.appendChild(d);
+    var co=el("td","t-co"), hi=histIndustry(h); if(hi) co.appendChild(indPill(hi)); co.appendChild(document.createTextNode(h.company+" ")); if(h.division) co.appendChild(divPill(h.division)); tr.appendChild(co);
     var sg=el("td","t-sig",h.signal||""); if(h.title&&safeUrl(h.link)) sg.appendChild(extLink("📰 "+h.title+" ↗",safeUrl(h.link))); tr.appendChild(sg);
     tr.appendChild(el("td","t-by",h.by||"—"));
     tr.appendChild(el("td","t-memo",h.memo||""));
     tb.appendChild(tr);
   });
   t.appendChild(tb); body.appendChild(t);
-  $("hMore").hidden=rows.length<=S.histShown;
-  $("hMore").textContent="더 보기 ("+Math.min(S.histShown,rows.length)+" / "+rows.length+")";
 }
 function csvCell(v){ v=String(v==null?"":v); if(/^[=+\-@]/.test(v)) v="'"+v; return '"'+v.replace(/"/g,'""')+'"'; }
 function downloadCsv(){
   var rows=histFiltered(); if(!rows.length){ toast("받을 기록이 없어요"); return; }
-  var lines=[["일시","주차","기업","구분","영업기회","관련기사","기사링크","컨택자","메모"].map(csvCell).join(",")];
-  rows.forEach(function(h){ lines.push([h.at,h.weekLabel,h.company,h.division,h.signal,h.title,h.link,h.by,h.memo].map(csvCell).join(",")); });
+  var lines=[["일시","주차","산업군","기업","구분","영업기회","관련기사","기사링크","컨택자","메모"].map(csvCell).join(",")];
+  rows.forEach(function(h){ lines.push([h.at,h.weekLabel,histIndustry(h),h.company,h.division,h.signal,h.title,h.link,h.by,h.memo].map(csvCell).join(",")); });
   var blob=new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}), url=URL.createObjectURL(blob), a=document.createElement("a");
   var n=new Date(); a.href=url; a.download="영업현황_히스토리_"+n.getFullYear()+("0"+(n.getMonth()+1)).slice(-2)+("0"+n.getDate()).slice(-2)+".csv";
   document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },1500);
@@ -652,7 +691,7 @@ function showTab(which){
 function bindSeg(id,key){
   $(id).addEventListener("click",function(ev){
     var b=ev.target.closest&&ev.target.closest("button"); if(!b) return;
-    S[key]=b.getAttribute("data-v")||"";
+    S[key]=b.getAttribute("data-v")||""; S.wPage=1;
     Array.prototype.forEach.call($(id).querySelectorAll("button"),function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
     renderRows();
   });
@@ -664,7 +703,7 @@ function loadHistory(){
     if(!res||!res.ok) throw new Error((res&&res.error)||"");
     S.hist=Array.isArray(res.rows)?res.rows.filter(function(x){ return x&&x.company; }):[];
     S.histTotal=Number(res.total)||S.hist.length; S.histLoaded=true;
-    fillWhoSelect(); renderStats(); renderFocus(); if(!$("pHist").hidden) renderHist();
+    fillFilters(); renderStats(); renderFocus(); if(!$("pHist").hidden) renderHist();
   }).catch(function(){ S.histLoaded=true; renderStats(); renderFocus(); if(!$("pHist").hidden) renderHist(); });
 }
 function load(){
@@ -674,7 +713,7 @@ function load(){
     S.items=Array.isArray(res.items)?res.items.filter(function(x){ return x&&x.company; }):[];
     S.names=Array.isArray(res.names)?res.names:[];
     $("week").textContent=(res.weekLabel?res.weekLabel+" · ":"")+"이번 주";
-    renderAll();
+    fillFilters(); renderAll();
   }).catch(function(e){ renderError(String(e&&e.message||e)+"\n잠시 후 다시 시도해 주세요."); });
   var p2=loadHistory();
   return Promise.all([p1,p2]).then(function(){ rb.classList.remove("spin"); },function(){ rb.classList.remove("spin"); });
@@ -700,9 +739,9 @@ function load(){
   $("tabWeek").addEventListener("click",function(){ showTab("week"); });
   $("tabHist").addEventListener("click",function(){ showTab("hist"); });
   bindSeg("fDiv","fDiv"); bindSeg("fSt","fSt");
-  $("q").addEventListener("input",renderRows);
-  ["hq","hWho","hPeriod"].forEach(function(id){ $(id).addEventListener(id==="hq"?"input":"change",function(){ S.histShown=HIST_PAGE; renderHist(); }); });
-  $("hMore").addEventListener("click",function(){ S.histShown+=HIST_PAGE; renderHist(); });
+  $("q").addEventListener("input",function(){ S.wPage=1; renderRows(); });
+  $("fInd").addEventListener("change",function(){ S.wPage=1; renderRows(); });
+  ["hq","hWho","hInd","hPeriod"].forEach(function(id){ $(id).addEventListener(id==="hq"?"input":"change",function(){ S.hPage=1; renderHist(); }); });
   $("hCsv").addEventListener("click",downloadCsv);
   $("refresh").addEventListener("click",function(){ load().then(function(){ toast("최신 상태로 불러왔어요"); }); });
   load();
