@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://script.google.com https://script.googleusercontent.com; base-uri 'none'; form-action 'none'">
+<title>이동 중 · Weekly Sales Radar</title>
+<style>
+  :root{--ink:#1F2937;--mut:#6B7280;--line:#E5E9F0;--navy:#1F2A44;}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F3F5F8;color:var(--ink);
+    font-family:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;padding:16px;word-break:keep-all;}
+  .box{width:100%;max-width:360px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px 22px;text-align:center;box-shadow:0 6px 24px rgba(15,23,42,.06);}
+  .sp{width:30px;height:30px;margin:0 auto 14px;border-radius:50%;border:3px solid #E5E9F0;border-top-color:var(--navy);animation:r .8s linear infinite;}
+  @keyframes r{to{transform:rotate(360deg)}}
+  .t{font-size:15px;font-weight:800;margin:0 0 6px;}
+  .s{font-size:13px;color:var(--mut);margin:0;line-height:1.55;}
+  .act{display:none;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+  .btn{height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;}
+  .btn.p{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .err .sp{display:none}.err .act{display:flex}
+</style>
+</head>
+<body>
+<main class="box" id="box" role="status" aria-live="polite">
+  <div class="sp" aria-hidden="true"></div>
+  <p class="t" id="t">이동 중…</p>
+  <p class="s" id="s">잠시만 기다려 주세요.</p>
+  <div class="act">
+    <button type="button" class="btn p" id="retry">다시 시도</button>
+    <a class="btn" id="home" href="contact.html">영업현황 열기</a>
+  </div>
+</main>
+<script>
+/* 메일 링크 → 원래 주소로 이동(클릭 관심도 집계).
+ * 이동할 주소는 서버(Apps Script)에 저장된 것만 받아 씀 → 주소를 붙여 아무 곳으로나 보내는 '열린 리다이렉트'가 없음 */
+(function(){
+  var API_URL = "https://script.google.com/macros/s/AKfycby7fJ-DyRz9QfY4-CnIgYmO7YQbrHp6DXSd-qb2-HW1wUkNKdLLj4mcnwNPthYkULUFbg/exec";
+  var TIMEOUT_MS = 9000;
+  var id = "";
+  try { id = String(new URLSearchParams(location.search).get("i") || ""); } catch (e) { id = ""; }
+  function fail(msg){
+    document.getElementById("box").className = "box err";
+    document.getElementById("t").textContent = "링크를 열지 못했어요";
+    document.getElementById("s").textContent = msg || "잠시 후 다시 시도해 주세요.";
+  }
+  function safeUrl(u){
+    try { var x = new URL(String(u || "")); return (x.protocol === "https:" || x.protocol === "http:") ? x.href : ""; } catch (e) { return ""; }
+  }
+  function go(){
+    if (!/^[A-Za-z0-9_-]{16}$/.test(id)) { fail("링크 주소가 올바르지 않아요."); return; }
+    document.getElementById("box").className = "box";
+    document.getElementById("t").textContent = "이동 중…";
+    document.getElementById("s").textContent = "잠시만 기다려 주세요.";
+    var done = false, timer = setTimeout(function(){ if (!done) { done = true; fail("응답이 늦어요. 다시 시도해 주세요."); } }, TIMEOUT_MS);
+    fetch(API_URL + "?api=go&i=" + encodeURIComponent(id) + "&_=" + Date.now(), { method: "GET", credentials: "omit", cache: "no-store", redirect: "follow" })
+      .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function(res){
+        if (done) return; done = true; clearTimeout(timer);
+        var u = res && res.ok ? safeUrl(res.url) : "";
+        if (!u) { fail((res && res.error) || "링크를 찾지 못했어요."); return; }
+        location.replace(u);
+      })
+      .catch(function(){ if (done) return; done = true; clearTimeout(timer); fail("연결이 원활하지 않아요. 다시 시도해 주세요."); });
+  }
+  document.getElementById("retry").addEventListener("click", go);
+  go();
+})();
+</script>
+</body>
+</html>
